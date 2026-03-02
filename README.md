@@ -2,6 +2,19 @@
 
 Fullstack personal expense manager with FastAPI + PostgreSQL + Redis + React.
 
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Run with Docker](#run-with-docker)
+- [Local Development](#local-development)
+- [Environment Variables (Backend)](#environment-variables-backend)
+- [Test](#test)
+- [API Modules](#api-modules)
+- [Notes](#notes)
+
 ## Features
 
 - Auth: register/login/refresh/logout with JWT access + refresh
