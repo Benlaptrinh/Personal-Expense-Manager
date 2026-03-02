@@ -9,6 +9,7 @@ Fullstack personal expense manager with FastAPI + PostgreSQL + Redis + React.
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Run with Docker](#run-with-docker)
+- [Makefile Shortcuts](#makefile-shortcuts)
 - [Local Development](#local-development)
 - [Environment Variables (Backend)](#environment-variables-backend)
 - [Test](#test)
@@ -91,6 +92,15 @@ Open API docs:
 
 - [Swagger UI](http://localhost:8000/docs)
 - [OpenAPI JSON](http://localhost:8000/openapi.json)
+
+## Makefile Shortcuts
+
+```bash
+make up            # start api + db + redis
+make migrate       # run alembic migrations
+make backend-test  # run backend test suite
+make frontend-run  # start Vite dev server
+```
 
 ## Local Development
 
