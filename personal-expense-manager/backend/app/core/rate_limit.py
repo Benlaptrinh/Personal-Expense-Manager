@@ -9,11 +9,16 @@ class RateLimitExceeded(Exception):
 async def enforce_login_rate_limit(identifier: str) -> None:
     settings = get_settings()
     key = f"rl:login:{identifier}"
-    redis_client = await get_redis_client()
+    try:
+        redis_client = await get_redis_client()
 
-    current = await redis_client.incr(key)
-    if current == 1:
-        await redis_client.expire(key, settings.RATE_LIMIT_LOGIN_WINDOW_SECONDS)
+        current = await redis_client.incr(key)
+        if current == 1:
+            await redis_client.expire(key, settings.RATE_LIMIT_LOGIN_WINDOW_SECONDS)
 
-    if current > settings.RATE_LIMIT_LOGIN_ATTEMPTS:
-        raise RateLimitExceeded()
+        if current > settings.RATE_LIMIT_LOGIN_ATTEMPTS:
+            raise RateLimitExceeded()
+    except RateLimitExceeded:
+        raise
+    except Exception:
+        return
