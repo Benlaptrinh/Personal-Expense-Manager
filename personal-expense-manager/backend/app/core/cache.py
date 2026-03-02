@@ -18,21 +18,30 @@ async def get_redis_client() -> redis.Redis:
 
 
 async def cache_get_json(key: str) -> dict[str, Any] | None:
-    client = await get_redis_client()
-    value = await client.get(key)
+    try:
+        client = await get_redis_client()
+        value = await client.get(key)
+    except Exception:
+        return None
     if value is None:
         return None
     return json.loads(value)
 
 
 async def cache_set_json(key: str, value: dict[str, Any], ttl_seconds: int) -> None:
-    client = await get_redis_client()
-    await client.set(key, json.dumps(value), ex=ttl_seconds)
+    try:
+        client = await get_redis_client()
+        await client.set(key, json.dumps(value), ex=ttl_seconds)
+    except Exception:
+        return None
 
 
 async def cache_delete(key: str) -> None:
-    client = await get_redis_client()
-    await client.delete(key)
+    try:
+        client = await get_redis_client()
+        await client.delete(key)
+    except Exception:
+        return None
 
 
 async def close_redis() -> None:
