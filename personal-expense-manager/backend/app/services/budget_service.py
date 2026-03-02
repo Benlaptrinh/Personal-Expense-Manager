@@ -33,4 +33,8 @@ class BudgetService:
         )
         await self.db.commit()
         await cache_delete(f"stats:{current_user.id}:{month}")
+        budgets = await self.budget_repo.list_for_user_month(current_user.id, month)
+        for item in budgets:
+            if item.category_id == category_id:
+                return item
         return budget

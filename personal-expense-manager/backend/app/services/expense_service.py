@@ -63,10 +63,10 @@ class ExpenseService:
             note=payload.note,
             spent_at=payload.spent_at,
         )
+        expense.category = category
         await self.db.commit()
-        await self.db.refresh(expense)
         await self.invalidate_stats_cache(current_user.id, datetime_to_month(expense.spent_at))
-        return expense
+        return await self.expense_repo.get_by_id(expense.id)
 
     async def update_expense(self, current_user: User, expense_id: int, payload: ExpenseUpdate):
         expense = await self.expense_repo.get_by_id(expense_id)
@@ -93,7 +93,7 @@ class ExpenseService:
             expense.spent_at = payload.spent_at
 
         await self.db.commit()
-        await self.db.refresh(expense)
+        expense = await self.expense_repo.get_by_id(expense.id)
 
         await self.invalidate_stats_cache(expense.user_id, old_month)
         await self.invalidate_stats_cache(expense.user_id, datetime_to_month(expense.spent_at))
@@ -122,15 +122,18 @@ class ExpenseService:
         query: str | None,
         user_id: int | None,
     ) -> str:
-        rows, _ = await self.list_expenses(
-            current_user,
+        target_user_id = current_user.id
+        if current_user.role == UserRole.ADMIN:
+            target_user_id = user_id
+
+        rows, _ = await self.expense_repo.list_expenses(
+            user_id=target_user_id,
             date_from=date_from,
             date_to=date_to,
             category_id=category_id,
             query=query,
             page=1,
-            size=100,
-            user_id=user_id,
+            size=10000,
         )
 
         output = io.StringIO()
