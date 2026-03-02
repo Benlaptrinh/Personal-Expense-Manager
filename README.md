@@ -11,7 +11,7 @@ Fullstack personal expense manager with FastAPI + PostgreSQL + Redis + React.
 - [Run with Docker](#run-with-docker)
 - [Makefile Shortcuts](#makefile-shortcuts)
 - [Local Development](#local-development)
-- [Environment Variables (Backend)](#environment-variables-backend)
+- [Environment Variables](#environment-variables)
 - [Test](#test)
 - [API Modules](#api-modules)
 - [Notes](#notes)
@@ -126,9 +126,11 @@ npm run dev
 
 Default API base URL for frontend: `http://localhost:8000/api/v1`
 
-## Environment Variables (Backend)
+## Environment Variables
 
-See [`backend/.env.example`](backend/.env.example)
+Backend: see [`backend/.env.example`](backend/.env.example)
+
+Frontend: set `VITE_API_URL` (example in [`frontend/.env.example`](frontend/.env.example)).
 
 ## Test
 
