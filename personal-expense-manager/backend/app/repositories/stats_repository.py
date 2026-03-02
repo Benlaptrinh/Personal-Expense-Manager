@@ -4,6 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Budget, Category, Expense
+from app.models.enums import CategoryType
 
 
 class StatsRepository:
@@ -38,7 +39,7 @@ class StatsRepository:
                 Expense.user_id == user_id,
                 Expense.spent_at >= month_start,
                 Expense.spent_at < month_end,
-                Category.type == "expense",
+                Category.type == CategoryType.EXPENSE,
             )
             .group_by(Expense.category_id)
             .subquery()

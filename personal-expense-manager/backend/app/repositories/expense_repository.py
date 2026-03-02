@@ -92,30 +92,3 @@ class ExpenseRepository:
         result = await self.db.execute(stmt)
         rows = list(result.unique().scalars().all())
         return rows, total
-
-    async def totals_by_month(self, user_id: int, month_start: datetime, month_end: datetime) -> tuple[float, float]:
-        stmt = (
-            select(
-                func.coalesce(
-                    func.sum(
-                        func.case((Category.type == "expense", Expense.amount), else_=0)
-                    ),
-                    0,
-                ),
-                func.coalesce(
-                    func.sum(
-                        func.case((Category.type == "income", Expense.amount), else_=0)
-                    ),
-                    0,
-                ),
-            )
-            .join(Category, Expense.category_id == Category.id)
-            .where(
-                Expense.user_id == user_id,
-                Expense.spent_at >= month_start,
-                Expense.spent_at < month_end,
-            )
-        )
-        result = await self.db.execute(stmt)
-        spend, income = result.one()
-        return float(spend), float(income)

@@ -1,17 +1,19 @@
+from collections.abc import AsyncGenerator
+
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import TokenPayloadError, decode_token
-from app.db.session import get_db_session
+from app.db.session import AsyncSessionLocal
 from app.models import User, UserRole
 from app.repositories.user_repository import UserRepository
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-async def get_db() -> AsyncSession:
-    async for session in get_db_session():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSessionLocal() as session:
         yield session
 
 

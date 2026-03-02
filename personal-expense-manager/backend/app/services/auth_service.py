@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.rate_limit import enforce_login_rate_limit
-from app.core.security import create_token, decode_token, hash_password, verify_password
+from app.core.security import TokenPayloadError, create_token, decode_token, hash_password, verify_password
 from app.repositories.refresh_token_repository import RefreshTokenRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import LoginRequest, RegisterRequest, TokenPair
@@ -57,7 +57,10 @@ class AuthService:
         return TokenPair(access_token=access_token, refresh_token=refresh_token)
 
     async def refresh(self, refresh_token: str) -> TokenPair:
-        payload = decode_token(refresh_token)
+        try:
+            payload = decode_token(refresh_token)
+        except TokenPayloadError:
+            raise HTTPException(status_code=401, detail={"code": "INVALID_TOKEN", "message": "Invalid refresh token"})
         if payload.get("type") != "refresh":
             raise HTTPException(status_code=401, detail={"code": "INVALID_TOKEN", "message": "Token type is not refresh"})
 
@@ -93,7 +96,10 @@ class AuthService:
         return TokenPair(access_token=access_token, refresh_token=new_refresh_token)
 
     async def logout(self, refresh_token: str) -> None:
-        payload = decode_token(refresh_token)
+        try:
+            payload = decode_token(refresh_token)
+        except TokenPayloadError:
+            raise HTTPException(status_code=401, detail={"code": "INVALID_TOKEN", "message": "Invalid refresh token"})
         if payload.get("type") != "refresh":
             raise HTTPException(status_code=400, detail={"code": "INVALID_TOKEN", "message": "Token type is not refresh"})
 
