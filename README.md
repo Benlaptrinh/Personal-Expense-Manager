@@ -140,3 +140,30 @@ pytest
 - Access token is short-lived and stateless.
 - Refresh token is stored in DB by `jti` and can be revoked.
 - `stats:{user_id}:{month}` cache is invalidated on expense/budget changes.
+
+## Response Envelope
+
+All API endpoints use a consistent JSON envelope.
+
+Success response:
+
+```json
+{
+  "success": true,
+  "data": {},
+  "meta": {}
+}
+```
+
+Error response:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "STRING_CODE",
+    "message": "Human readable message",
+    "details": []
+  }
+}
+```
