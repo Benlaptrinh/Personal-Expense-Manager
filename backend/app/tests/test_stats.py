@@ -1,17 +1,6 @@
 import pytest
 
-
-async def register_and_login(client, email: str):
-    await client.post(
-        "/api/v1/auth/register",
-        json={"email": email, "password": "Password123", "role": "user"},
-    )
-    login_res = await client.post(
-        "/api/v1/auth/login",
-        json={"email": email, "password": "Password123"},
-    )
-    return login_res.json()["data"]["access_token"]
-
+from app.tests.helpers import register_and_login
 
 @pytest.mark.asyncio
 async def test_stats_cache_invalidation(client, fake_redis):
