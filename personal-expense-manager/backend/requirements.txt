@@ -6,6 +6,7 @@ alembic
 pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt<4.0
 redis
 httpx
 pytest
@@ -13,3 +14,5 @@ pytest-asyncio
 python-multipart
 email-validator
 aiosqlite
+eval_type_backport
+greenlet

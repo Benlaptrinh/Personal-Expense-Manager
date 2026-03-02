@@ -68,7 +68,10 @@ class AuthService:
         record = await self.refresh_repo.get_by_jti(jti)
         if record is None or record.revoked:
             raise HTTPException(status_code=401, detail={"code": "TOKEN_REVOKED", "message": "Refresh token is revoked"})
-        if record.expires_at < datetime.now(timezone.utc):
+        expires_at = record.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if expires_at < datetime.now(timezone.utc):
             raise HTTPException(status_code=401, detail={"code": "TOKEN_EXPIRED", "message": "Refresh token expired"})
 
         user = await self.user_repo.get_by_id(int(payload["sub"]))
